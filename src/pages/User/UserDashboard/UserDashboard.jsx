@@ -717,7 +717,7 @@
 
 
 
-// New code with checkbox - testing not done
+// New code with checkbox - testing not done yet
 
 
 
@@ -732,7 +732,7 @@ import { useNavigate } from "react-router-dom"; // ✅ NEW
 import { SocketContext } from "../../../SocketManager/SocketManager";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import "./UserDashboard.css";
-import { InnerTextFormat } from "../../../FormateData/InnerTextFormat";
+import { InnerTextFormat } from "../../../FormateData/InnerTextFormat"; 
 
 const DEFAULT_RATE = "--";
 
