@@ -1,0 +1,37 @@
+.url-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.url-table td,
+.url-table th {
+  border: 1px solid #ddd;
+  padding: 6px;
+}
+
+.main-row {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.raw-text-table {
+  width: 100%;
+}
+
+.cell-up {
+  background: #e6fffa;
+  color: green;
+}
+
+.cell-down {
+  background: #ffe6e6;
+  color: red;
+}
+
+.status-dot.connected {
+  background: green;
+}
+
+.status-dot.disconnected {
+  background: red;
+}

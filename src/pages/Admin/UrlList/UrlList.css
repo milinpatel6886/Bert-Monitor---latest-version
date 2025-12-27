@@ -1,0 +1,420 @@
+/* Dashboard.css */
+
+@import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css");
+
+/* Dashboard container */
+.dashboard-container {
+  padding: 40px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Dashboard table */
+/* .dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+} */
+
+.dashboard-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-table .MuiTableCell-root {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.dashboard-table th {
+  background-color: #ae943ce0;
+  color: white;
+}
+
+/* Button styles */
+.edit-btn,
+.delete-btn {
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #ffc107;
+  color: #fff;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* No data message */
+.no-data {
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  padding: 20px;
+}
+
+/* Search Input - Professional with animations */
+.search-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 50px 10px 14px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.search-input:hover {
+  border-color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Search Icon Animations */
+.search-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.85);
+  width: 18px;
+  height: 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.search-input:hover + .search-icon,
+.search-input:hover ~ .search-icon {
+  transform: translateY(-50%) scale(1);
+  opacity: 0.8;
+}
+
+.search-input:focus + .search-icon,
+.search-input:focus ~ .search-icon {
+  transform: translateY(-50%) scale(1.2);
+}
+
+.search-input:valid + .search-icon,
+.search-input:not(:placeholder-shown) ~ .search-icon {
+  transform: translateY(-50%) scale(1.15);
+  opacity: 1;
+  animation: searchPulse 2s infinite;
+}
+
+@keyframes searchPulse {
+  0%,
+  100% {
+    transform: translateY(-50%) scale(1.15);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.2);
+    opacity: 0.9;
+  }
+}
+
+/* Sorting */
+.sort-ing {
+  float: right;
+}
+
+/* Input styling */
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #000000;
+  border-color: #000000;
+  border-radius: 6px;
+}
+
+.search-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal styles */
+.modal-header {
+  background-color: #d3c596;
+  color: black;
+}
+
+.assigned-item {
+  background-color: #fcfcf8;
+}
+
+.assigned-item:hover {
+  background-color: #eaeae1;
+}
+
+/* Add user modal layout */
+.layout-wrapper {
+  padding: 16px;
+}
+
+.add-user-left-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.allocate-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.url-list-container {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-title,
+.url-list-container h5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.list-box {
+  flex: 1;
+  min-height: 0;
+  border: 1px solid #d6d6d6;
+  border-radius: 4px;
+  background-color: #f9fafb;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.item {
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  border: 1px solid #d6d6d6;
+  background-color: #ffffff;
+  font-size: 14px;
+  cursor: move;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+}
+
+.assigned-item {
+  background-color: #fffdf4;
+  border-color: #9d9d9d;
+  font-weight: 500;
+}
+
+.item:hover {
+  background-color: #ae943ce0;
+  border-color: #9d9d9d;
+  color: rgb(255, 255, 255);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.item:active {
+  transform: scale(0.98);
+}
+
+/* Scrollbar styling */
+.list-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.list-box::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 3px;
+}
+
+.list-box::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Modal footer buttons */
+.modal-footer .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-dark {
+  min-width: 110px;
+}
+
+/* Status badges */
+.status-active {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+  border: 1px solid #c3e6cb !important;
+}
+
+/* .status-inactive {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 80px;
+  text-align: center;
+} */
+
+.status-inactive {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border: 1px solid #f5c6cb !important;
+}
+
+/* .status-active {
+  background-color: #def9ed;
+  color: #0f9d58;
+} */
+
+/* .status-inactive {
+  background-color: #f6e5e4;
+  color: #d93025;
+} */
+
+/* Table hover effect */
+.dashboard-table tbody tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Edit/Delete button icons (icon-only style) */
+.edit-btn {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  cursor: pointer;
+  color: #1f0f93e0 !important;
+  outline: none;
+  font-size: 24px;
+  height: 40px;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 6px !important;
+  cursor: pointer;
+  color: #ff0000e0 !important;
+  outline: none;
+  font-size: 24px;
+  height: 40px;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+  .search-input-wrapper {
+    max-width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.95rem;
+    padding: 12px 48px 12px 14px;
+  }
+
+  .search-icon {
+    width: 16px;
+    height: 16px;
+    right: 14px;
+  }
+
+  .dashboard-container {
+    padding: 20px;
+  }
+}
+
+/* Status badges */
+.status-active,
+.status-inactive {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.status-active {
+  background-color: #def9ed;
+  color: #0f9d58;
+}
+
+.status-inactive {
+  background-color: #f6e5e4;
+  color: #d93025;
+}
+
+
+.spinner-border {
+  width: 5rem;
+  height: 5rem;
+  border-width: 0.15em;
+    border: 10px solid #c4c4c4;          /* gray */
+  border-top-color: #ae943ce0;           /* red */
+  border-right-color: #000000;         /* black */
+
+
+}
