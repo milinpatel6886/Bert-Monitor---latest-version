@@ -1,6 +1,5 @@
 // Old Code without filtering subscribed rows only
 
-
 // import React, {
 //   useContext,
 //   useState,
@@ -353,19 +352,7 @@
 
 // export default Subscribe;
 
-
-
-
-
-
-
-
-
-
-
-
 // New Code with filterinig subscribed rows only - tesiting not done yet
-
 
 import React, {
   useContext,
@@ -395,17 +382,18 @@ const Row = React.memo(({ row, prevRow }) => (
         cls = c > p ? "cell-up" : "cell-down";
       }
 
-      return <td key={i} className={cls}>{curr ?? DEFAULT_RATE}</td>;
+      return (
+        <td key={i} className={cls}>
+          {curr ?? DEFAULT_RATE}
+        </td>
+      );
     })}
   </tr>
 ));
 
 const Subscribe = () => {
-  const {
-    combineData,
-    socketSubscriptions,
-    connectionStatus,
-  } = useContext(SocketContext);
+  const { combineData, socketSubscriptions, connectionStatus } =
+    useContext(SocketContext);
 
   const [htmlData, setHtmlData] = useState({});
   const [apiData, setApiData] = useState({});
@@ -434,9 +422,7 @@ const Subscribe = () => {
       const name = item.name || item.url;
       if (!socketSubscriptions[name]) return;
 
-      api[name] = socketSubscriptions[name].map(
-        (i) => item.text?.[i]
-      );
+      api[name] = socketSubscriptions[name].map((i) => item.text?.[i]);
       prevApi.current[name] ??= [];
     });
 
@@ -466,7 +452,11 @@ const Subscribe = () => {
                   />
                 </td>
                 <td onClick={() => toggleRow(name)}>
-                  {expandedRows.includes(name) ? <FaChevronUp /> : <FaChevronDown />}
+                  {expandedRows.includes(name) ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </td>
               </tr>
 
@@ -495,14 +485,14 @@ const Subscribe = () => {
   return (
     <div className="subscribe-wrapper">
       <div className="global-actions">
-        <button onClick={() =>
-          setExpandedRows([...Object.keys(htmlData), ...Object.keys(apiData)])
-        }>
+        <button
+          onClick={() =>
+            setExpandedRows([...Object.keys(htmlData), ...Object.keys(apiData)])
+          }
+        >
           Expand All
         </button>
-        <button onClick={() => setExpandedRows([])}>
-          Collapse All
-        </button>
+        <button onClick={() => setExpandedRows([])}>Collapse All</button>
       </div>
 
       {renderTable("HTML Subscriptions", htmlData, prevHtml)}
