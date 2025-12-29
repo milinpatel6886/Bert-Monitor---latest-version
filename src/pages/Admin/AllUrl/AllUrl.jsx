@@ -286,28 +286,6 @@ const AllUrl = () => {
 export default AllUrl;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // add checkboxes and subscribe button
 // import React, {
 //   useContext,

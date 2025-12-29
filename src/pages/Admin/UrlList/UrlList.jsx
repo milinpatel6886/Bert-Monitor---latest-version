@@ -1,4 +1,3 @@
-// use of modal for add url
 import React, { useEffect, useState, useContext } from "react";
 import "./UrlList.css";
 import { toast } from "react-toastify";
@@ -758,3 +757,219 @@ const UrlList = () => {
 };
 
 export default UrlList;
+
+// Modal code is outside from the scope of this comparison
+
+// import React, { useEffect, useState, useContext } from "react";
+// import "./UrlList.css";
+// import { toast } from "react-toastify";
+// import {
+//   getUrlsApi,
+//   deleteUrlApi,
+// } from "../../../api/authService";
+// import EditIcon from "@mui/icons-material/Edit";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import { SocketContext } from "../../../SocketManager/SocketManager";
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableContainer,
+//   TableHead,
+//   TableRow,
+//   TableSortLabel,
+//   Paper,
+//   Chip,
+//   IconButton,
+//   Pagination,
+// } from "@mui/material";
+// import { Modal, Button } from "react-bootstrap";
+
+// // ✅ NEW MODAL
+// import UrlModal from "../../common/UrlFormModal";
+
+// const UrlList = () => {
+//   const [data, setData] = useState([]);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [itemsPerPage, setItemsPerPage] = useState(5);
+//   const [selectedItem, setSelectedItem] = useState(null);
+//   const [showDeleteModal, setShowDeleteModal] = useState(false);
+//   const [loading, setLoading] = useState(true);
+//   const { connectionStatus } = useContext(SocketContext);
+
+//   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
+//   // Modal State
+//   const [showFormModal, setShowFormModal] = useState(false);
+//   const [isEdit, setIsEdit] = useState(false);
+//   const [editData, setEditData] = useState(null);
+
+//   /* ---------------- Fetch ---------------- */
+//   const fetchData = async () => {
+//     setLoading(true);
+//     try {
+//       const res = await getUrlsApi();
+//       setData(res);
+//     } catch {
+//       toast.error("Failed to load URLs.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
+
+//   /* ---------------- Sort ---------------- */
+//   const handleSort = (key) => {
+//     setSortConfig((prev) => ({
+//       key,
+//       direction: prev.direction === "asc" ? "desc" : "asc",
+//     }));
+//   };
+
+//   /* ---------------- Delete ---------------- */
+//   const handleDelete = async () => {
+//     try {
+//       await deleteUrlApi(selectedItem._id);
+//       toast.success("Deleted successfully!");
+//       fetchData();
+//       setShowDeleteModal(false);
+//     } catch {
+//       toast.error("Delete failed.");
+//     }
+//   };
+
+//   /* ---------------- Modal Open ---------------- */
+//   const openAddModal = () => {
+//     setIsEdit(false);
+//     setEditData(null);
+//     setShowFormModal(true);
+//   };
+
+//   const openEditModal = (item) => {
+//     setIsEdit(true);
+//     setEditData(item);
+//     setShowFormModal(true);
+//   };
+
+//   /* ---------------- Data Logic (UNCHANGED) ---------------- */
+//   const filteredData = data.filter((i) =>
+//     i.name?.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+
+//   const sortedData = [...filteredData].sort((a, b) => {
+//     if (!sortConfig.key) return 0;
+//     return sortConfig.direction === "asc"
+//       ? `${a[sortConfig.key]}`.localeCompare(`${b[sortConfig.key]}`)
+//       : `${b[sortConfig.key]}`.localeCompare(`${a[sortConfig.key]}`);
+//   });
+
+//   const startIndex = (currentPage - 1) * itemsPerPage;
+//   const currentItems = sortedData.slice(startIndex, startIndex + itemsPerPage);
+
+//   return (
+//     <div className="dashboard-container">
+//       {/*  HEADER */}
+//       <div className="d-flex justify-content-between mb-3">
+//         <button className="btn btn-dark" onClick={openAddModal}>
+//           + Add Urls
+//         </button>
+
+//         <input
+//           className="form-control w-25"
+//           placeholder="Search urls..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//         />
+//       </div>
+
+//       {/* TABLE (UNCHANGED) */}
+//       <TableContainer component={Paper}>
+//         <Table stickyHeader>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Sr No</TableCell>
+//               <TableCell>
+//                 <TableSortLabel onClick={() => handleSort("name")}>
+//                   Name
+//                 </TableSortLabel>
+//               </TableCell>
+//               <TableCell>Scrap from</TableCell>
+//               <TableCell>Status</TableCell>
+//               <TableCell align="center">Edit</TableCell>
+//               <TableCell align="center">Delete</TableCell>
+//             </TableRow>
+//           </TableHead>
+
+//           <TableBody>
+//             {currentItems.map((item, i) => (
+//               <TableRow key={item._id}>
+//                 <TableCell>{startIndex + i + 1}</TableCell>
+//                 <TableCell>{item.name}</TableCell>
+//                 <TableCell>{item.scrap_from}</TableCell>
+//                 <TableCell>
+//                   <Chip
+//                     label={connectionStatus?.[item.name] ? "Active" : "Inactive"}
+//                     className={
+//                       connectionStatus?.[item.name]
+//                         ? "status-active"
+//                         : "status-inactive"
+//                     }
+//                   />
+//                 </TableCell>
+//                 <TableCell align="center">
+//                   <IconButton onClick={() => openEditModal(item)}>
+//                     <EditIcon />
+//                   </IconButton>
+//                 </TableCell>
+//                 <TableCell align="center">
+//                   <IconButton onClick={() => {
+//                     setSelectedItem(item);
+//                     setShowDeleteModal(true);
+//                   }}>
+//                     <DeleteIcon />
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+
+//       {/* PAGINATION */}
+//       <Pagination
+//         className="mt-3"
+//         count={Math.ceil(sortedData.length / itemsPerPage)}
+//         page={currentPage}
+//         onChange={(e, v) => setCurrentPage(v)}
+//       />
+
+//       {/* ADD / EDIT MODAL */}
+//       <UrlModal
+//         show={showFormModal}
+//         isEdit={isEdit}
+//         editData={editData}
+//         onClose={() => setShowFormModal(false)}
+//         onSuccess={fetchData}
+//       />
+
+//       {/* DELETE MODAL */}
+//       <Modal show={showDeleteModal} centered>
+//         <Modal.Body>
+//           Delete <strong>{selectedItem?.name}</strong> ?
+//         </Modal.Body>
+//         <Modal.Footer>
+//           <Button onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+//           <Button variant="danger" onClick={handleDelete}>
+//             Delete
+//           </Button>
+//         </Modal.Footer>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default UrlList;
