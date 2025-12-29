@@ -446,19 +446,6 @@
 
 // export default UserDashboard;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // working code without checkbox testing done
 
 // import React, { useContext, useState, useEffect, useRef, useCallback } from "react";
@@ -701,25 +688,7 @@
 
 // export default UserDashboard;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // New code with checkbox - testing not done yet
-
-
 
 import React, {
   useContext,
@@ -732,7 +701,7 @@ import { useNavigate } from "react-router-dom"; // ✅ NEW
 import { SocketContext } from "../../../SocketManager/SocketManager";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import "./UserDashboard.css";
-import { InnerTextFormat } from "../../../FormateData/InnerTextFormat"; 
+import { InnerTextFormat } from "../../../FormateData/InnerTextFormat";
 
 const DEFAULT_RATE = "--";
 
@@ -776,14 +745,14 @@ const TextRow = React.memo(
 );
 
 const UserDashboard = ({ userAllocatedUrls = [] }) => {
-  const navigate = useNavigate(); // ✅ NEW
+  const navigate = useNavigate(); //  NEW
 
   const {
     combineSocket,
     isConnected,
     connectionStatus,
     setConnectionStatus,
-    setSocketSubscriptions, // ✅ NEW
+    setSocketSubscriptions, //  NEW
   } = useContext(SocketContext);
 
   const [htmlData, setHtmlData] = useState({});
@@ -791,12 +760,12 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
   const [expandedRows, setExpandedRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedRows, setSelectedRows] = useState({}); // ✅ NEW
+  const [selectedRows, setSelectedRows] = useState({}); //  NEW
 
   const prevHtmlRef = useRef({});
   const prevApiRef = useRef({});
 
-  // ✅ NEW checkbox handler
+  // NEW checkbox handler
   const handleCheckboxChange = useCallback((market, index, checked) => {
     setSelectedRows((prev) => {
       const rows = prev[market] || [];
@@ -881,7 +850,7 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
     );
   }, []);
 
-  // ✅ NEW Subscribe handler
+  // NEW Subscribe handler
   const handleSubscribe = () => {
     setSocketSubscriptions(selectedRows);
     navigate("/user/subscribe");
@@ -918,17 +887,12 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
                     <td>
                       <span
                         className={`status-dot ${
-                          connectionStatus[name]
-                            ? "connected"
-                            : "disconnected"
+                          connectionStatus[name] ? "connected" : "disconnected"
                         }`}
                       />
                       {connectionStatus[name] ? "Connected" : "Disconnected"}
                     </td>
-                    <td
-                      className="toggle-icon"
-                      onClick={() => toggleRow(name)}
-                    >
+                    <td className="toggle-icon" onClick={() => toggleRow(name)}>
                       {expandedRows.includes(name) ? (
                         <FaChevronUp />
                       ) : (
@@ -954,25 +918,27 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
                           </thead>
 
                           <tbody>
-                            {(dataSet[name].rawText ||
-                              dataSet[name].text).map((row, i) => {
-                              const prevRow = prevRef.current[name]?.[i] || {};
-                              prevRef.current[name][i] = row;
+                            {(dataSet[name].rawText || dataSet[name].text).map(
+                              (row, i) => {
+                                const prevRow =
+                                  prevRef.current[name]?.[i] || {};
+                                prevRef.current[name][i] = row;
 
-                              return (
-                                <TextRow
-                                  key={i}
-                                  row={row}
-                                  prevRow={prevRow}
-                                  isChecked={
-                                    selectedRows[name]?.includes(i) || false
-                                  }
-                                  onCheckboxChange={handleCheckboxChange}
-                                  marketName={name}
-                                  rowIndex={i}
-                                />
-                              );
-                            })}
+                                return (
+                                  <TextRow
+                                    key={i}
+                                    row={row}
+                                    prevRow={prevRow}
+                                    isChecked={
+                                      selectedRows[name]?.includes(i) || false
+                                    }
+                                    onCheckboxChange={handleCheckboxChange}
+                                    marketName={name}
+                                    rowIndex={i}
+                                  />
+                                );
+                              }
+                            )}
                           </tbody>
                         </table>
                       </td>
@@ -1039,15 +1005,3 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
 };
 
 export default UserDashboard;
-
-
-
-
-
-
-
-
-
-
-
-
