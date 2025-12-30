@@ -8,7 +8,7 @@ import {
   fetchRawApiData,
 } from "../../../api/authService";
 
-const UrlModal = ({
+const UrlModal = ({ 
   show,
   onClose,
   onSuccess,
@@ -58,7 +58,7 @@ const UrlModal = ({
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  /* ---------------- Scrap HTML ---------------- */
+  /* ---------------- Scrap HTML ------------------ */
   const handleScrap = async () => {
     if (!formData.url || !formData.target || !formData.mode) {
       return toast.error("Please fill all fields before scraping.");
@@ -86,7 +86,7 @@ const UrlModal = ({
     }
   };
 
-  /* ---------------- Fetch API ---------------- */
+  /* ---------------- Fetch API ------------------- */
   const handleFetchApi = async () => {
     if (!formData.url) return toast.error("Enter API URL");
 
@@ -106,7 +106,7 @@ const UrlModal = ({
     }
   };
 
-  /* ---------------- Submit ---------------- */
+  /* ---------------- Submit ---------------------- */
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -132,6 +132,7 @@ const UrlModal = ({
 
   return (
     <Modal show={show} onHide={onClose} centered size="lg">
+
       <Modal.Header closeButton>
         <Modal.Title>
           {isEdit
@@ -245,6 +246,7 @@ const UrlModal = ({
           </button>
         </div>
       </Modal.Body>
+
     </Modal>
   );
 };
