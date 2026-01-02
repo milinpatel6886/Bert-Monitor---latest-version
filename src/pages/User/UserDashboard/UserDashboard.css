@@ -293,3 +293,11 @@ display: flex;
     max-width: 100%;
   }
 }
+
+
+.table-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-block-start: 10px;
+}

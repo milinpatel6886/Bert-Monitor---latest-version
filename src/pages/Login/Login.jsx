@@ -131,13 +131,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { isConnected, startCombinedScrape } = useContext(SocketContext);
+  // const { isConnected, startCombinedScrape } = useContext(SocketContext);
+  const { isConnected } = useContext(SocketContext);
 
-  useEffect(() => {
-    if (!isConnected) {
-      startCombinedScrape();
-    }
-  }, [isConnected, startCombinedScrape]);
+  // useEffect(() => {
+  //   if (!isConnected) {
+  //     startCombinedScrape();
+  //   }
+  // }, [isConnected, startCombinedScrape]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -187,11 +188,12 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error.message);
-      setErrorMessage(
-        error.message === "Invalid username or password."
-          ? error.message
-          : "Login failed. Please try again."
-      );
+      toast.error("Invalid username or password.")
+      // setErrorMessage(
+      //   error.message === "Invalid username or password."
+      //     ? error.message
+      //     : "Login failed. Please try again."
+      // );
     } finally {
       setLoading(false);
     }

@@ -760,6 +760,20 @@ const UrlList = () => {
 
 export default UrlList;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Modal code is outside from the scope of this comparison
 
 // import React, { useEffect, useState, useContext } from "react";
@@ -788,7 +802,7 @@ export default UrlList;
 // import { Modal, Button } from "react-bootstrap";
 
 // // ✅ NEW MODAL
-// import UrlModal from "../../common/UrlFormModal";
+// import UrlModal from "../../../common/UrlModal";
 
 // const UrlList = () => {
 //   const [data, setData] = useState([]);

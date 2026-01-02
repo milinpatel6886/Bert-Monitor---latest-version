@@ -37,6 +37,8 @@ const AdminDashboard = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isUrlLoading, setIsUrlLoading] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -83,8 +85,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const getUserById = async (user) => {
-    setLoading(true);
+  const getUserById = async (user, allUrls) => {
     try {
       const result = await getUserByIdApi(user._id);
 
@@ -99,40 +100,49 @@ const AdminDashboard = () => {
       });
 
       const assigned = (result.urls || []).map((urlId) => {
-        const found = urlsData.find((u) => u.id === urlId);
-        return { id: urlId, name: found ? found.name : "Unknown URL" };
+        const found = allUrls.find((u) => u.id === urlId);
+        return {
+          id: urlId,
+          name: found ? found.name : "Unknown URL",
+        };
       });
+
       setUserItems(assigned);
       setAvailableItems(
-        urlsData.filter((url) => !assigned.some((a) => a.id === url.id))
+        allUrls.filter((url) => !assigned.some((a) => a.id === url.id))
       );
     } catch (error) {
       toast.error("Failed to load user details");
     }
-    setLoading(false);
   };
 
   const handleOpenModal = async (edit = false, user = null) => {
     setLoading(true);
-    const allUrls = await getAllUrls();
     setIsEdit(edit);
 
-    if (edit && user) {
-      await getUserById(user);
-    } else {
-      setFormData({
-        username: "",
-        password: "",
-        startDate: "",
-        endDate: "",
-        urls: [],
-        isActive: false,
-      });
-      setAvailableItems(allUrls);
-      setUserItems([]);
+    try {
+      const allUrls = await getAllUrls();
+
+      if (edit && user) {
+        await getUserById(user, allUrls);
+      } else {
+        setFormData({
+          username: "",
+          password: "",
+          startDate: "",
+          endDate: "",
+          urls: [],
+          isActive: false,
+        });
+        setAvailableItems(allUrls);
+        setUserItems([]);
+      }
+      setShowModal(true);
+    } catch (err) {
+      toast.error("Something went wrong while opening modal");
+    } finally {
+      setLoading(false);
     }
-    setShowModal(true);
-    setLoading(false);
   };
 
   const handleCloseModal = () => {
@@ -288,7 +298,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="dashboard-container">
-
       <div className="d-flex justify-content-between align-items-center mb-3 gap-3 flex-wrap">
         <div>
           <button
@@ -542,7 +551,6 @@ const AdminDashboard = () => {
         username={selectedUser?.username}
       />
     </div>
-    
   );
 };
 

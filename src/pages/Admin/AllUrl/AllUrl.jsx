@@ -73,6 +73,7 @@ const AllUrl = () => {
 
           const newStructuredData = InnerTextFormat(payload);
 
+
           newPrevHtml[name] = prev[name]?.rawText || [];
           updated[name] = { rawText: newStructuredData };
           const dynamicKey = Object.keys(item)[0];
@@ -285,7 +286,29 @@ const AllUrl = () => {
 
 export default AllUrl;
 
-// add checkboxes and subscribe button
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import React, {
 //   useContext,
 //   useState,

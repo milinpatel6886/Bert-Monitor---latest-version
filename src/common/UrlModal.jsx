@@ -6,7 +6,7 @@ import {
   updateUrlApi,
   scrapHtmlApi,
   fetchRawApiData,
-} from "../../../api/authService";
+} from "../api/authService";
 
 const UrlModal = ({ 
   show,

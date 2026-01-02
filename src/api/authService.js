@@ -98,3 +98,12 @@ export const fetchRawApiData = (payload) =>
     method: "POST",
     body: payload,
   });
+
+
+  /*=========================== SUBSCRIBE API ===================== */
+
+  export const subscribe = (payload) => 
+    apiRequest(API_ENDPOINTS.SUBSCRIBED_ROW,{
+      method:'PUT',
+      body:payload
+    })

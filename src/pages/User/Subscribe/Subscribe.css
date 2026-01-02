@@ -35,3 +35,13 @@
 .status-dot.disconnected {
   background: red;
 }
+
+.sub-heading {
+  text-align: center;
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-block-end: 10px;
+}

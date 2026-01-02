@@ -27,6 +27,10 @@ const API_ENDPOINTS = {
   // SCRAP
   SCRAP_API: `${BASE_URL}/api/v1/scrape/scrape`,
   RAW_API: `${BASE_URL}/api/v1/scrape/raw`,
+
+
+  //--------------------------------------------------------USER SIDE------------------------------
+  SUBSCRIBED_ROW:`${BASE_URL}/api/v1/user/subscribe`
 };
 
 export default API_ENDPOINTS;

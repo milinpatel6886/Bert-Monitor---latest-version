@@ -43,7 +43,7 @@ const UserHeader = () => {
   return (
     <AppBar position="sticky" className="uh-appbar-root">
       <Toolbar disableGutters className="uh-toolbar-root">
-        <Typography variant="h6" noWrap className="uh-project-name">
+        <Typography variant="h6" noWrap className="uh-project-name" onClick={() => navigate("/user/user-dashboard")}>
           Welcome, {username}
         </Typography>
 
