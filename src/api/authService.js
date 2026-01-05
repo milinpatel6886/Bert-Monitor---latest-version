@@ -1,4 +1,5 @@
 import API_ENDPOINTS from "../config/api.config.jsx";
+// import axios from "axios";
 
 export const apiRequest = async (
   url,
@@ -102,8 +103,21 @@ export const fetchRawApiData = (payload) =>
 
   /*=========================== SUBSCRIBE API ===================== */
 
-  export const subscribe = (payload) => 
-    apiRequest(API_ENDPOINTS.SUBSCRIBED_ROW,{
-      method:'PUT',
-      body:payload
-    })
+  // export const subscribe = (payload) => 
+  //   apiRequest(API_ENDPOINTS.SUBSCRIBED_ROW,{
+  //     method:'PUT',
+  //     body:payload
+  //   })
+
+export const subscribe = (payload) =>
+  apiRequest(API_ENDPOINTS.SUBSCRIBED_ROW, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: payload
+  });
+
+
+
+

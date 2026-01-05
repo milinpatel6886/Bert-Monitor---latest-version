@@ -132,13 +132,13 @@ const Login = () => {
   const navigate = useNavigate();
 
   // const { isConnected, startCombinedScrape } = useContext(SocketContext);
-  const { isConnected } = useContext(SocketContext);
+  const { isConnected, startCombinedScrape } = useContext(SocketContext);
 
-  // useEffect(() => {
-  //   if (!isConnected) {
-  //     startCombinedScrape();
-  //   }
-  // }, [isConnected, startCombinedScrape]);
+  useEffect(() => {
+    if (!isConnected) {
+      startCombinedScrape();
+    }
+  }, [isConnected, startCombinedScrape]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

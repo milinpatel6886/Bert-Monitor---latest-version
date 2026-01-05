@@ -234,7 +234,7 @@ const SocketProvider = ({ children }) => {
 
   const [connectionStatus, setConnectionStatus] = useState({});
 
-  /* 🔥 NEW – SELECTED ROWS STORAGE */
+  /* NEW – SELECTED ROWS STORAGE */
   const [subscribedRows, setSubscribedRows] = useState({});
 
   const [combineData, setCombineData] = useState({
@@ -280,9 +280,9 @@ const SocketProvider = ({ children }) => {
       setStatusMessage(msg.message || "Status update");
 
       if (msg.status === "authenticated") {
-        socket.emit("join_user_room", {
-          user_id: localStorage.getItem("user_id"),
-        });
+        socket.emit(
+        localStorage.getItem("user_id"),
+        );
       }
 
       if (msg.status === "scraping_started") setIsScraping(true);
@@ -411,7 +411,7 @@ const SocketProvider = ({ children }) => {
         connectionStatus,
         setConnectionStatus,
 
-        /* 🔥 IMPORTANT */
+        /*  IMPORTANT */
         subscribedRows,
 
         startCombinedScrape,

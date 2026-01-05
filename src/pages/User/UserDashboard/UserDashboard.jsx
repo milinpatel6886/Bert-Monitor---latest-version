@@ -10,8 +10,10 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../../../SocketManager/SocketManager";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { subscribe } from "../../../api/authService";
 import "./UserDashboard.css";
 import { InnerTextFormat } from "../../../FormateData/InnerTextFormat";
+import { toast } from "react-toastify";
 
 const DEFAULT_RATE = "--";
 
@@ -69,6 +71,7 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
     connectionStatus,
     setConnectionStatus,
     subscribeSelected,
+    combineSocketRef
   } = useContext(SocketContext);
 
   const [htmlData, setHtmlData] = useState({});
@@ -181,56 +184,185 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
 
   /* ===================== SUBSCRIBE ===================== */
 
+
+  // working code
   // const handleSubscribe = () => {
-  //   const result = {};
+  //   const selectedRowsArray = [];
 
   //   Object.entries(selectedRows).forEach(([market, rowKeys]) => {
-  //     const rows =
-  //       htmlData[market]?.rawText || apiData[market]?.text || [];
+  //     const rows = htmlData[market]?.rawText || apiData[market]?.text || [];
 
   //     const selectedData = rows.filter((row, index) =>
   //       rowKeys.includes(getRowKey(row, index))
   //     );
 
   //     if (selectedData.length) {
-  //       result[market] = selectedData;
+  //       selectedRowsArray.push(
+  //         ...selectedData.map((row) => ({
+  //           ...row,
+  //           market,
+  //         }))
+  //       );
   //     }
   //   });
 
-  //   // console.log("✅ SELECTED FULL ROW DATA:", result);
+  //   console.log("✅ FINAL SELECTED ROWS (ARRAY):", selectedRowsArray);
 
-  //   // 🔥 THIS IS IMPORTANT
-  //   subscribeSelected(result);
+  //   subscribeSelected(selectedRowsArray);
 
   //   navigate("/user/subscribe");
   // };
 
-  const handleSubscribe = () => {
-    const selectedRowsArray = [];
 
-    Object.entries(selectedRows).forEach(([market, rowKeys]) => {
-      const rows = htmlData[market]?.rawText || apiData[market]?.text || [];
 
-      const selectedData = rows.filter((row, index) =>
-        rowKeys.includes(getRowKey(row, index))
-      );
+// const handleSubscribe = () => {
+  
+//   // ✅ user_id EXACTLY as backend expects
+//   const userId = localStorage.getItem("user_id");
 
-      if (selectedData.length) {
-        selectedRowsArray.push(
-          ...selectedData.map((row) => ({
-            ...row,
-            market,
-          }))
-        );
-      }
+//   if (!userId) {
+//     console.error("❌ User ID not found in localStorage");
+//     return;
+//   }
+
+//   const subscriptionsMap = {};
+
+//   // 🔁 loop selected rows grouped by market
+//   Object.entries(selectedRows).forEach(([marketname, rowKeys]) => {
+//     const rows =
+//       htmlData[marketname]?.rawText ||
+//       apiData[marketname]?.text ||
+//       [];
+
+//     const selectedData = rows.filter((row, index) =>
+//       rowKeys.includes(getRowKey(row, index))
+//     );
+
+//     if (!subscriptionsMap[marketname]) {
+//       subscriptionsMap[marketname] = [];
+//     }
+
+//     selectedData.forEach((row) => {
+//       // ✅ SYMBOL FIELD (adjust if needed)
+//       const symbol =
+//         row.Symbol ||
+//         row.symbol ||
+//         row["Symbol Name"] ||
+//         row["Name"];
+
+//       if (symbol) {
+//         subscriptionsMap[marketname].push(symbol);
+//       }
+//     });
+//   });
+
+//   // filter subscription
+//   let subscriptionData = Object.entries(subscriptionsMap)
+//       .filter(([, symbols]) => symbols.length > 0)
+//       .map(([marketname, symbols]) => ({
+//         marketname,
+//         symbols: [...new Set(symbols)], // remove duplicates
+//       }))
+
+//   // req payload
+//   const payload = {
+//     user_id: userId,
+//     subscriptions: subscriptionData,
+//   };
+
+//   console.log("🚀 FINAL PAYLOAD SENT TO BACKEND:", payload);
+
+//   if (payload.subscriptions.length === 0) {
+//     console.error("❌ No valid subscriptions selected");
+//     return;
+//   }
+
+//   subscribe(payload);
+//   toast.success("Subscribed successfully done!")
+//   navigate("/user/subscribe");
+// };
+
+
+
+
+const handleSubscribe = () => {
+  const userId = localStorage.getItem("user_id");
+
+  if (!userId) {
+    console.error("❌ User ID not found in localStorage");
+    return;
+  }
+
+  const subscriptionsMap = {};
+  const socketPayload = []; // 🔥 ADD THIS
+
+  Object.entries(selectedRows).forEach(([marketname, rowKeys]) => {
+    const rows =
+      htmlData[marketname]?.rawText ||
+      apiData[marketname]?.text ||
+      [];
+
+    const selectedData = rows.filter((row, index) =>
+      rowKeys.includes(getRowKey(row, index))
+    );
+
+    if (!subscriptionsMap[marketname]) {
+      subscriptionsMap[marketname] = [];
+    }
+
+    selectedData.forEach((row) => {
+      const symbol =
+        row.Symbol ||
+        row.symbol ||
+        row["Symbol Name"] ||
+        row["Name"];
+
+      if (!symbol) return;
+
+      // backend payload
+      subscriptionsMap[marketname].push(symbol);
+
+      // 🔥 socket payload
+      socketPayload.push({
+        market: marketname,
+        symbol,
+      });
     });
+  });
 
-    console.log("✅ FINAL SELECTED ROWS (ARRAY):", selectedRowsArray);
+  // backend payload formatting
+  const subscriptionData = Object.entries(subscriptionsMap)
+    .filter(([, symbols]) => symbols.length > 0)
+    .map(([marketname, symbols]) => ({
+      marketname,
+      symbols: [...new Set(symbols)],
+    }));
 
-    subscribeSelected(selectedRowsArray);
-
-    navigate("/user/subscribe");
+  const payload = {
+    user_id: userId,
+    subscriptions: subscriptionData,
   };
+
+  console.log("🚀 FINAL PAYLOAD SENT TO BACKEND:", payload);
+  console.log("📡 SOCKET subscribe_selected payload:", socketPayload);
+
+  if (payload.subscriptions.length === 0) {
+    console.error("❌ No valid subscriptions selected");
+    return;
+  }
+
+  // ✅ BACKEND API
+  subscribe(payload);
+
+  // ✅ SOCKET EMIT (THIS IS THE KEY PART)
+  if (combineSocketRef&& isConnected) {
+    combineSocketRef.emit("subscribe_selected", socketPayload);
+  }
+
+  toast.success("Subscribed successfully done!");
+  navigate("/user/subscribe");
+};
+
 
   const hasSelections = Object.keys(selectedRows).length > 0;
 
@@ -380,8 +512,6 @@ const UserDashboard = ({ userAllocatedUrls = [] }) => {
         >
           Collapse All
         </button>
-
-        <button className="header-action-btn">Subscribe</button>
       </div>
 
       {Object.keys(htmlData).length > 0 &&
