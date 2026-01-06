@@ -30,7 +30,8 @@ const API_ENDPOINTS = {
 
 
   //--------------------------------------------------------USER SIDE------------------------------
-  SUBSCRIBED_ROW:`${BASE_URL}/api/v1/user/subscribe`
+  SUBSCRIBED_ROW:`${BASE_URL}/api/v1/user/subscribe`,
+  SUBSCRIBED_LIST:`${BASE_URL}/api/v1/user/get_subscribelist`,
 };
 
 export default API_ENDPOINTS;

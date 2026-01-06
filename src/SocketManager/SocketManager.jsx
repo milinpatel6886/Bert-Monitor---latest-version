@@ -212,12 +212,6 @@
 // };
 
 // export default SocketProvider;
-
-
-
-
-
-
 import React, { createContext, useRef, useState, useEffect } from "react";
 import io from "socket.io-client";
 import { ENV } from "../utils/env";
@@ -228,15 +222,17 @@ const BASE_URL = ENV.API_BASE_URL;
 const SocketProvider = ({ children }) => {
   const combineSocketRef = useRef(null);
 
+  /* ================= CONNECTION STATE ================= */
   const [isConnected, setIsConnected] = useState(false);
   const [isScraping, setIsScraping] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
-
   const [connectionStatus, setConnectionStatus] = useState({});
 
-  /* NEW – SELECTED ROWS STORAGE */
+  /* ================= SUBSCRIPTIONS ================= */
   const [subscribedRows, setSubscribedRows] = useState({});
+  const [subscriberList, setSubscriberList] = useState([]);
 
+  /* ================= DATA ================= */
   const [combineData, setCombineData] = useState({
     html_scrape: [],
     api_scrape: [],
@@ -255,7 +251,7 @@ const SocketProvider = ({ children }) => {
       combineSocketRef.current.disconnect();
     }
 
-    const socket = io(`${BASE_URL}`, {
+    const socket = io(BASE_URL, {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
@@ -265,6 +261,7 @@ const SocketProvider = ({ children }) => {
 
     combineSocketRef.current = socket;
 
+    /* ================= CONNECT ================= */
     socket.on("connect", () => {
       setIsConnected(true);
       setStatusMessage("Connected to socket server");
@@ -276,14 +273,9 @@ const SocketProvider = ({ children }) => {
       });
     });
 
+    /* ================= STATUS ================= */
     socket.on("status", (msg) => {
       setStatusMessage(msg.message || "Status update");
-
-      if (msg.status === "authenticated") {
-        socket.emit(
-        localStorage.getItem("user_id"),
-        );
-      }
 
       if (msg.status === "scraping_started") setIsScraping(true);
       if (msg.status === "scraping_stopped") setIsScraping(false);
@@ -296,18 +288,19 @@ const SocketProvider = ({ children }) => {
           setPrevCombineData(prev);
           return payload;
         });
-        console.log("ADMIN DATA", payload);
+        console.log("ADMIN DATA:", payload);
       } else {
-        console.log("USER DATA", payload);
+        console.log("USER DATA:", payload);
       }
     });
 
-    /* OPTIONAL: backend echo (safe to keep) */
-    // socket.on("subscribe_selected", (data) => {
-    //   console.log("📥 subscribe_selected (server echo):", data);
-    //   setSubscribedRows(data);
-    // });
+    /* ================= SUBSCRIBER LIST ================= */
+    socket.on("subscriptionList_data", (payload) => {
+      console.log("📥 subscriptionList_data:", payload);
+      setSubscriberList(payload?.subscriptions || []);
+    });
 
+    /* ================= DISCONNECT ================= */
     socket.on("disconnect", () => {
       setIsConnected(false);
       setIsScraping(false);
@@ -332,9 +325,8 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "token") {
-        const newToken = event.newValue;
-        if (newToken) {
-          initializeSocket(newToken);
+        if (event.newValue) {
+          initializeSocket(event.newValue);
         } else {
           combineSocketRef.current?.disconnect();
           combineSocketRef.current = null;
@@ -348,31 +340,18 @@ const SocketProvider = ({ children }) => {
 
   /* ================= ACTIONS ================= */
   const startCombinedScrape = () => {
-    if (combineSocketRef.current && isConnected) {
-      combineSocketRef.current.emit("start_combined", {});
-      setStatusMessage("Starting combined scraping...");
-    }
+    if (!combineSocketRef.current || !isConnected) return;
+    combineSocketRef.current.emit("start_combined", {});
+    setStatusMessage("Starting combined scraping...");
   };
 
   const stopScraping = () => {
-    if (combineSocketRef.current && isConnected) {
-      combineSocketRef.current.emit("stop_scraping", {});
-      setStatusMessage("Stopping scraper...");
-    }
+    if (!combineSocketRef.current || !isConnected) return;
+    combineSocketRef.current.emit("stop_scraping", {});
+    setStatusMessage("Stopping scraper...");
   };
 
-  /*  MAIN METHOD USED BY USER DASHBOARD */
-  // const subscribeSelected = (selectedItems) => {
-  //   if (!combineSocketRef.current || !isConnected) {
-  //     console.warn("Socket not connected");
-  //     return;
-  //   }
-  //   console.log("📤 subscribe_selected:", selectedItems);
-
-  //   setSubscribedRows(selectedItems);
-  //   combineSocketRef.current.emit("subscribe_selected", selectedItems);
-  // };
-
+  /* ================= SUBSCRIBE SELECTED ================= */
   const subscribeSelected = (selectedRows) => {
     if (!combineSocketRef.current || !isConnected) return;
 
@@ -380,7 +359,6 @@ const SocketProvider = ({ children }) => {
     const payload = [];
 
     selectedRows.forEach((row) => {
-      console.log(row);
       const market = row?.market;
       const symbol = row?.["Symbol Name"];
 
@@ -392,13 +370,26 @@ const SocketProvider = ({ children }) => {
       payload.push({ market, symbol });
     });
 
-    console.log("✅ subscribedRows:", lookup);
-    console.log("📤 subscribe_selected payload:", payload);
-
     setSubscribedRows(lookup);
     combineSocketRef.current.emit("subscribe_selected", payload);
+
+    console.log("📤 subscribe_selected payload:", payload);
   };
 
+  /* ================= FETCH SUBSCRIBER LIST ================= */
+  const fetchSubscriberList = () => {
+    if (!combineSocketRef.current || !isConnected) return;
+    console.log("📤 Requesting subscriber list");
+    combineSocketRef.current.emit("Subscriber_list");
+  };
+  /* ================= AUTO FETCH SUBSCRIBER LIST ================= */
+  useEffect(() => {
+    if (isConnected && combineSocketRef.current) {
+      fetchSubscriberList();
+    }
+  }, [isConnected]);
+
+  /* ================= PROVIDER ================= */
   return (
     <SocketContext.Provider
       value={{
@@ -411,12 +402,13 @@ const SocketProvider = ({ children }) => {
         connectionStatus,
         setConnectionStatus,
 
-        /*  IMPORTANT */
         subscribedRows,
+        subscriberList,
 
         startCombinedScrape,
         stopScraping,
         subscribeSelected,
+        fetchSubscriberList,
       }}
     >
       {children}
