@@ -358,45 +358,13 @@
   }
 }
 
-/* Search Input - Professional with animations */
-.search-input-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  max-width: 300px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 50px 10px 14px;
-  font-size: 1rem;
-  color: #333;
-  background-color: #fff;
-  border: 2px solid #e1e5e9;
-  border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  outline: none;
-}
-
-.search-input:focus {
-  border-color: #000000;
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.search-input:hover {
-  border-color: #000000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateY(-1px);
-}
-
-
-
-
 .no-results {
   text-align: center;
   font-style: italic;
   color: #666;
   padding: 20px;
 }
+
+
+
+

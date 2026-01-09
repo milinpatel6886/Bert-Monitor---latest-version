@@ -45,3 +45,27 @@
   font-weight: 600;
   margin-block-end: 10px;
 }
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #ddd;
+  border-top-color: #000000;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

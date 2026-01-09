@@ -10,6 +10,7 @@ import { SocketContext } from "../../../SocketManager/SocketManager";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import "./Subscribe.css";
 import { InnerTextFormat } from "../../../FormateData/InnerTextFormat";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_RATE = "--";
 
@@ -50,14 +51,19 @@ const Subscribe = () => {
     combineSocket,
     connectionStatus,
     subscriberList,
+    combineData,
   } = useContext(SocketContext);
 
   const [htmlData, setHtmlData] = useState({});
   const [apiData, setApiData] = useState({});
   const [expandedRows, setExpandedRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
 
   const prevHtmlRef = useRef({});
   const prevApiRef = useRef({});
+
+  const navigate = useNavigate()
 
   /* ===================== DERIVED SUBSCRIBED ROWS ===================== */
   const subscribedRows = useMemo(() => {
@@ -73,75 +79,147 @@ const Subscribe = () => {
     });
 
     return result;
+    
   }, [subscriberList]);
 
   /* ===================== SOCKET LISTENER ===================== */
+  // useEffect(() => {
+  //   if (!combineSocket) return;
+
+  //   const handleData = (payload) => {
+  //     if (payload?.type !== "combined_scrape") return;
+
+  //     /* ---------- HTML ---------- */
+  //     setHtmlData((prev) => {
+  //       const updated = { ...prev };
+
+  //       payload.html_scrape?.forEach((item) => {
+  //         const market = Object.keys(item)[0];
+  //         const rows = InnerTextFormat(item[market]) || [];
+
+  //         const subscribedSymbols = subscribedRows?.[market];
+  //         if (!subscribedSymbols) return;
+
+  //         updated[market] ??= [];
+  //         const rowMap = new Map(
+  //           updated[market].map((r) => [r["Symbol Name"], r])
+  //         );
+
+  //         rows.forEach((row) => {
+  //           const symbol = row?.["Symbol Name"];
+  //           if (!subscribedSymbols[symbol]) return;
+  //           rowMap.set(symbol, row);
+  //         });
+
+  //         updated[market] = Array.from(rowMap.values());
+  //       });
+
+  //       return updated;
+  //     });
+
+  //     /* ---------- API ---------- */
+  //     setApiData((prev) => {
+  //       const updated = { ...prev };
+
+  //       payload.api_scrape?.forEach((item) => {
+  //         const market = item.name || item.url;
+  //         const rows = item.text || [];
+
+  //         const subscribedSymbols = subscribedRows?.[market];
+  //         if (!subscribedSymbols) return;
+
+  //         updated[market] ??= [];
+  //         const rowMap = new Map(
+  //           updated[market].map((r) => [r["Symbol Name"], r])
+  //         );
+
+  //         rows.forEach((row) => {
+  //           const symbol = row?.["Symbol Name"];
+  //           if (!subscribedSymbols[symbol]) return;
+  //           rowMap.set(symbol, row);
+  //         });
+
+  //         updated[market] = Array.from(rowMap.values());
+  //       });
+
+  //       return updated;
+  //     });
+  //   };
+
+  //   combineSocket.on("data", handleData);
+  //   return () => combineSocket.off("data", handleData);
+  // }, [combineSocket, subscribedRows]);
+
   useEffect(() => {
-    if (!combineSocket) return;
+  if (!combineSocket) return;
 
-    const handleData = (payload) => {
-      if (payload?.type !== "combined_scrape") return;
+  const handleData = (payload) => {
+    if (payload?.type !== "combined_scrape") return;
 
-      /* ---------- HTML ---------- */
-      setHtmlData((prev) => {
-        const updated = { ...prev };
+    // ✅ stop loader once data starts coming
+    setLoading(false);
 
-        payload.html_scrape?.forEach((item) => {
-          const market = Object.keys(item)[0];
-          const rows = InnerTextFormat(item[market]) || [];
+    /* ---------- HTML ---------- */
+    setHtmlData((prev) => {
+      const updated = { ...prev };
 
-          const subscribedSymbols = subscribedRows?.[market];
-          if (!subscribedSymbols) return;
+      payload.html_scrape?.forEach((item) => {
+        const market = Object.keys(item)[0];
+        const rows = InnerTextFormat(item[market]) || [];
 
-          updated[market] ??= [];
-          const rowMap = new Map(
-            updated[market].map((r) => [r["Symbol Name"], r])
-          );
+        const subscribedSymbols = subscribedRows?.[market];
+        if (!subscribedSymbols) return;
 
-          rows.forEach((row) => {
-            const symbol = row?.["Symbol Name"];
-            if (!subscribedSymbols[symbol]) return;
-            rowMap.set(symbol, row);
-          });
+        updated[market] ??= [];
+        const rowMap = new Map(
+          updated[market].map((r) => [r["Symbol Name"], r])
+        );
 
-          updated[market] = Array.from(rowMap.values());
+        rows.forEach((row) => {
+          const symbol = row?.["Symbol Name"];
+          if (!subscribedSymbols[symbol]) return;
+          rowMap.set(symbol, row);
         });
 
-        return updated;
+        updated[market] = Array.from(rowMap.values());
       });
 
-      /* ---------- API ---------- */
-      setApiData((prev) => {
-        const updated = { ...prev };
+      return updated;
+    });
 
-        payload.api_scrape?.forEach((item) => {
-          const market = item.name || item.url;
-          const rows = item.text || [];
+    /* ---------- API ---------- */
+    setApiData((prev) => {
+      const updated = { ...prev };
 
-          const subscribedSymbols = subscribedRows?.[market];
-          if (!subscribedSymbols) return;
+      payload.api_scrape?.forEach((item) => {
+        const market = item.name || item.url;
+        const rows = item.text || [];
 
-          updated[market] ??= [];
-          const rowMap = new Map(
-            updated[market].map((r) => [r["Symbol Name"], r])
-          );
+        const subscribedSymbols = subscribedRows?.[market];
+        if (!subscribedSymbols) return;
 
-          rows.forEach((row) => {
-            const symbol = row?.["Symbol Name"];
-            if (!subscribedSymbols[symbol]) return;
-            rowMap.set(symbol, row);
-          });
+        updated[market] ??= [];
+        const rowMap = new Map(
+          updated[market].map((r) => [r["Symbol Name"], r])
+        );
 
-          updated[market] = Array.from(rowMap.values());
+        rows.forEach((row) => {
+          const symbol = row?.["Symbol Name"];
+          if (!subscribedSymbols[symbol]) return;
+          rowMap.set(symbol, row);
         });
 
-        return updated;
+        updated[market] = Array.from(rowMap.values());
       });
-    };
 
-    combineSocket.on("data", handleData);
-    return () => combineSocket.off("data", handleData);
-  }, [combineSocket, subscribedRows]);
+      return updated;
+    });
+  };
+
+  combineSocket.on("data", handleData);
+  return () => combineSocket.off("data", handleData);
+}, [combineSocket, subscribedRows]);
+
 
   /* ===================== TOGGLE ===================== */
   const toggleRow = useCallback((market) => {
@@ -241,10 +319,20 @@ const Subscribe = () => {
     );
   };
 
+  if (loading) {
+  return (
+    <div className="dashboard-container loader-container">
+      <div className="loader"></div>
+      <p>Loading subscribed data...</p>
+    </div>
+  );
+}
+
   /* ===================== UI ===================== */
   return (
     <div className="dashboard-container">
       <div className="global-actions">
+        <button className="header-action-btn" onClick={() => navigate("/user/user-dashboard")}>Back</button>
         <button
           className="header-action-btn"
           onClick={() =>
@@ -280,6 +368,8 @@ export default Subscribe;
 
 
 
+
+// -----------------------------------------OLD
 // import React, {
 //   useContext,
 //   useEffect,
